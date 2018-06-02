@@ -1,6 +1,7 @@
   
 let songs=[];
 let playlists=[];
+let songsForPlaylist=[];
 
 
 function Song(title, img, time, id ,music){
@@ -14,9 +15,9 @@ class Playlist {
     constructor(id,title,displayInput,displaySpan,songs) {
         this.id = id,
         this.title = title,
-        this.songs = songs,
         this.displayInput=displayInput,
-        this.displaySpan=displaySpan
+        this.displaySpan=displaySpan,
+        this.songs = songs
     }
 };
 
@@ -31,6 +32,16 @@ function loadPlaylists() {
     }
   } 
 
+
+function saveSongs() {
+    localStorage.setItem('songs', JSON.stringify(songsForPlaylist));
+}
+  
+function loadSongs() {
+    if (localStorage.getItem('songs')) {
+        songsForPlaylist = JSON.parse(localStorage.getItem('songs'));
+    }
+  } 
 //////API 
 var menuGenres=document.getElementsByClassName('menu-genre');
 for (menuGenre of menuGenres){
@@ -38,13 +49,14 @@ for (menuGenre of menuGenres){
 }
 function dataHandler(event){
     const data = JSON.parse(event.target.responseText);//response - объект DOM содержащий получ. инфо
-    console.log(data);
+   
     songs.length=0;
     for (each of data){
         var newSong= new Song(each.title, each.artwork_url, each.original_content_size, each.id ,'u');
         songs.push(newSong);
         createSongsList(songs);
     }
+    
 }
 function getSongsAPI(genre){
     const url = `https://api.soundcloud.com/tracks?client_id=jHIO7kur07kyRKwzce6Ol52j1My6zV0L&limit=15&offset=0&tags=${genre}`;
@@ -52,5 +64,4 @@ function getSongsAPI(genre){
     xhr.open('GET', url);
     xhr.addEventListener('load', dataHandler);
     xhr.send();
-    
 }

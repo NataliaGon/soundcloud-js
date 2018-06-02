@@ -1,3 +1,4 @@
+
 /*
 ******************
 * Nav
@@ -117,14 +118,24 @@
     float: right;
     color: #D8D8D8;    
 }
-.fa-heart:hover{
+/* .icon-heart:hover{
     color: #9B9B9B;
-}
-.fa-heart:active{
+} */
+.icon-heart:active{
     color: #2196F3;
 }
 .dropdown{
-    display: none;    
+    z-index: 2; 
+    border: solid 1px gray;
+    display: none;
+    position: absolute;
+    background: white;
+    z-index: 2;
+    border-color: gray;
+    right: 20px;
+    top: 137px;
+    box-shadow: 0px 0px 1px 1px #6B7294;
+    padding: 10px;
 }
 hr{
     display: block;
@@ -161,6 +172,8 @@ hr{
 .icon-heart{
     position: absolute;
     right: 10px;
+    color: #CCE0E8;
+
 }
 /*
 ******************
@@ -275,3 +288,6 @@ hr{
 /* .container-for-songs-in-playlist{
     display: flex;
 } */
+.display{
+    display: block;
+}
