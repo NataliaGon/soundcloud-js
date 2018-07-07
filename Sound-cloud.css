@@ -14,7 +14,8 @@
         display: inline-flex;
     }   
     .nav-conteiner  ul li{
-        display: flex;         
+        display: flex;  
+        cursor: pointer;       
     }   
     .nav-conteiner  ul li:hover, .selected{
         background: rgb(28, 126, 211);        
@@ -45,7 +46,8 @@
         .nav-conteiner  ul li{
             float: right; 
             display: inline;         
-            padding: 22px 10px 22px 10px;        
+            padding: 22px 10px 22px 10px; 
+            cursor: pointer;       
         }
         .nav-conteiner  ul li:hover{
             background: #1E88E5;        
@@ -255,6 +257,7 @@ hr{
     padding: 20px;
     background: dodgerblue;
     color: white;
+    cursor: pointer;
 }
 #all-playlists-holder{
     display: flex;
@@ -276,7 +279,8 @@ hr{
     margin-top: 25px;
 }
 .playlist-title{
-    display: block;
+    display: flex;
+    justify-content: space-between;
     width: 100%;
     height: 64px;
     border: 1px solid gray;
@@ -285,9 +289,19 @@ hr{
 .list-title-playlist-nav{
     margin-top: 15px;
 }
-/* .container-for-songs-in-playlist{
+.container-for-songs-in-playlist{
     display: flex;
-} */
+}
 .display{
     display: block;
+}
+.delete-playlist-btn{
+    color: rgb(201, 1, 1);
+    cursor: pointer;
+}
+.playlist-title input{
+    height: 20%;
+} 
+.container-for-songs-in-playlist{
+    flex-wrap: wrap;
 }

@@ -15,7 +15,6 @@ playlist.addEventListener('click', function () {
     main.style.display = "none";
     playlistContainer.style.display = "flex";
     loadPlaylists();
-    loadSongs();
     createPlaylistsList(playlists);
 });
 
@@ -46,15 +45,15 @@ function createSongsList(songs) {
     }
     songsContainer.innerHTML = songsHTML;
     for (songBtn of songsIconBtns) {
-        songBtn.addEventListener('click', () => {
+        songBtn.addEventListener('click',() => {
 
             const dropdownSong = document.querySelector(`div[data-id="${event.target.dataset.id}"]`);
-
+            var inputsValue = [];
             if (dropdownSong.classList.contains('display')) {
                 event.target.style.color = '#D8D8D8';
                 dropdownSong.classList.remove('display');
                 var allInputs = document.getElementsByClassName('input-playlist-title');
-                var inputsValue = [];
+                let songsForPlaylist;
                 for (i of allInputs) {
                     if (i.checked) {
                         inputsValue.push(i.value);
@@ -65,13 +64,13 @@ function createSongsList(songs) {
                 
                 for (song of songs) {
                     if (song.id == songId) {
-                        songsForPlaylist.push(song);
+                        songsForPlaylist=song;
                         break;
                     }
                     
                 }
                 pushSongInPlaylist(songsForPlaylist, inputsValue);
-                saveSongs();
+                
 
             } else {
                 event.target.style.color = '#2196F3';
@@ -85,17 +84,7 @@ function createSongsList(songs) {
                 ulTitleOfPlaylists.innerHTML = titleString;
                 dropdownSong.classList.add('display');
             }
-            function pushSongInPlaylist(song, playlistsId) {
-                for (i of playlistsId) {
-                    for (j of playlists) {
-                        if (j.id == i) {
-                            j.songs.push(song);
-                        }
-                    }
-                }
-                console.log(playlists);
-                savePlaylists();
-            }
+          
         })
     }
 
@@ -122,57 +111,67 @@ addPlaylistBtn.addEventListener('click', () => {
 })
 
 function createPlaylistsList(playlists) {
-    // var songsId = [];
-    // for (i of playlists) {
-    //     if (i.songs.length > 0) {
-    //         for (j of i.songs) {
-    //             songsId.push(j)
-    //         }
-    //     }
-    //     console.log(songsId);
-    // }
-    
-    // for (i of songsId){
-
-    // }
-
-   
-
-
+ 
 let playlistsHTML = '';
 for (each of playlists) {
-    console.log(playlists);
+   
     playlistsHTML += '<div class="one-playlist-object">\
         <span class="playlist-title">\
         <input autofocus="true" style="display:'+ each.displayInput + '";  onfocusout="inputLostFocus()" type="text" data-id="' + each.id + '"  class="playlist-input" placeholder="Untitled">\
         <span onclick="showInput()" style="display:'+ each.displaySpan + '"; class ="playlist-nav-span" data-id="' + each.id + '" >' + each.title + '</span>\
+        <span class ="delete-playlist-btn" data-id="'+ each.id +'">Delete</span>\
         </span>\
        <div class="container-for-songs-in-playlist">';
 
-    for (i of each.songs) {
-        console.log(i.id);
+    for (trek of each.songs) {
+        
         playlistsHTML += '<div class="song-container" >\
-        <div class="song-clip" style="background-image:url('+ song.img + ');">\
+        <div class="song-clip" style="background-image:url('+ trek.img + ');">\
         </div>\
-        <div class="song-title">'+ song.title + '</div>\
+        <div class="song-title">'+ trek.title + '</div>\
         <span class="icon-clock"></span>\
         <span class="song-time"></span>\
-        <span class="icon-heart" data-id="' + song.id + '"></span>\
-        <div class="dropdown" data-id="' + song.id + '">\
+        <span class="icon-heart" data-id="' + trek.id + '"></span>\
+        <div class="dropdown" data-id="' + trek.id + '">\
             <h3>Add to playlist</h3>\
-            <ul class="container-for-playlists-title" data-id="' + song.id + '" ></ul>\
+            <ul class="container-for-playlists-title" data-id="' + trek.id + '" ></ul>\
             <a href="#">Create playlist</a>\
             <hr/>\
         </div>\
     </div>';
     }
     playlistsHTML += '</div></div>';
+
 }
+
+
 allPlaylistHolder.innerHTML = playlistsHTML;
 savePlaylists();
 titleForNav();
 
+var a = document.getElementsByClassName('delete-playlist-btn');
+    for(var i = 0; i < a.length; i++){
+        var b = a[i]; 
+        b.addEventListener('click', deletePlaylist) 
 }
+for (songBtn of songsIconBtns) {
+    songBtn.addEventListener('click', songOpenDrop)
+}
+}
+function deletePlaylist(){
+
+    for(list of playlists){
+        if (list.id == this.dataset.id){
+           if (confirm("Do you really want to delete this playlist?")===true){
+            const indListToDlt = playlists.indexOf(list);
+            playlists.splice(indListToDlt, 1);
+            savePlaylists();
+            createPlaylistsList(playlists);
+           }
+        };
+    }
+}
+
 
 function titleForNav() {
     const playlistsTitle = playlists.map((playlist) => {
@@ -188,10 +187,16 @@ function inputLostFocus() {
     if (event.target.value.length > 0) {
         for (each of playlists) {
             if (each.id == event.target.dataset.id) {
+                console.log(event.target.dataset.id);
                 each.title = event.target.value;
+                event.target.style.display="none";
+                event.target.nextElementSibling.style.display = "block";
                 each.displayInput = 'none';
                 each.displaySpan = 'block';
+          
                 titleForNav();
+                savePlaylists();
+                createPlaylistsList(playlists);
             }
         }
     }
@@ -203,3 +208,58 @@ function showInput() {
     event.target.previousElementSibling.value = event.target.innerHTML;
 }
 
+function songOpenDrop(){
+    const dropdownSong = document.querySelector(`div[data-id="${event.target.dataset.id}"]`);
+    console.log(dropdownSong);
+            var inputsValue = [];
+            if (dropdownSong.classList.contains('display')) {
+                event.target.style.color = '#D8D8D8';
+                dropdownSong.classList.remove('display');
+                var allInputs = document.getElementsByClassName('input-playlist-title');
+                let songsForPlaylist;
+                for (i of allInputs) {
+                    if (i.checked) {
+                        inputsValue.push(i.value);
+                    }
+                }
+                
+                let songId = event.target.dataset.id;
+                
+                for (song of songs) {
+                    if (song.id == songId) {
+                        songsForPlaylist=song;
+                        break;
+                    }
+                    
+                }
+                pushSongInPlaylist(songsForPlaylist, inputsValue);
+                
+
+            } else {
+                event.target.style.color = '#2196F3';
+                loadPlaylists();
+                const titlesOfPlaylists = playlists.map((playlist) => {
+                    return ('<li><input class="input-playlist-title" value="' + playlist.id + '" type="checkbox">' + playlist.title + '</input></li>');
+
+                });
+                var titleString = titlesOfPlaylists.join('');
+                const ulTitleOfPlaylists = document.querySelector(`ul[data-id="${event.target.dataset.id}"]`);
+                ulTitleOfPlaylists.innerHTML = titleString;
+                dropdownSong.classList.add('display');
+            }
+          
+
+}
+
+function pushSongInPlaylist(newSongForPlaylist, playlistsId) {
+    for (i of playlistsId) {
+        for (j of playlists) {
+            if (j.id == i) {
+                j.songs.push(song);
+            }
+        }
+    }
+    var inputsValue = [];
+    console.log(playlists);
+    savePlaylists();
+}

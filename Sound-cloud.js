@@ -1,7 +1,7 @@
   
 let songs=[];
 let playlists=[];
-let songsForPlaylist=[];
+
 
 
 function Song(title, img, time, id ,music){
@@ -33,15 +33,6 @@ function loadPlaylists() {
   } 
 
 
-function saveSongs() {
-    localStorage.setItem('songs', JSON.stringify(songsForPlaylist));
-}
-  
-function loadSongs() {
-    if (localStorage.getItem('songs')) {
-        songsForPlaylist = JSON.parse(localStorage.getItem('songs'));
-    }
-  } 
 //////API 
 var menuGenres=document.getElementsByClassName('menu-genre');
 for (menuGenre of menuGenres){
@@ -65,3 +56,5 @@ function getSongsAPI(genre){
     xhr.addEventListener('load', dataHandler);
     xhr.send();
 }
+
+
