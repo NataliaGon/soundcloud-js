@@ -120,9 +120,7 @@
     float: right;
     color: #D8D8D8;    
 }
-/* .icon-heart:hover{
-    color: #9B9B9B;
-} */
+
 .icon-heart:active{
     color: #2196F3;
 }
@@ -132,7 +130,6 @@
     display: none;
     position: absolute;
     background: white;
-    z-index: 2;
     border-color: gray;
     right: 20px;
     top: 137px;
