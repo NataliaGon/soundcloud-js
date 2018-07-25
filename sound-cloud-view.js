@@ -1,4 +1,5 @@
 
+
 //Menu
 const explore = document.getElementById('explore');
 const playlist = document.getElementById('playlist');
@@ -209,7 +210,9 @@ function songOpenDrop() {
             }
 
         }
-        pushSongInPlaylist(songForPlaylist, inputsValue);
+        deleteSongFromPlaylist(songId, inputsValue);
+        pushSongInPlaylist(songForPlaylist, inputsValue, songId);
+       
 
 
     } else {
@@ -232,27 +235,70 @@ function songOpenDrop() {
         }
         console.log(b)
 
-    
-    if (b == true) {
-        titlesOfPlaylists += '<li><input checked class="input-playlist-title"  value="' + each.id + '" type="checkbox">' + each.title + '</input></li>'
-        b = false;
+
+        if (b == true) {
+            titlesOfPlaylists += '<li><input checked class="input-playlist-title"  value="' + each.id + '" type="checkbox">' + each.title + '</input></li>'
+            b = false;
+        }
+        else {
+            titlesOfPlaylists += '<li><input class="input-playlist-title" value="' + each.id + '" type="checkbox">' + each.title + '</input></li>'
+        }
+        ulTitleOfPlaylists.innerHTML = titlesOfPlaylists;
+        dropdownSong.classList.add('display');
+
     }
-    else {
-        titlesOfPlaylists += '<li><input class="input-playlist-title" value="' + each.id + '" type="checkbox">' + each.title + '</input></li>'
+}
+
+
+function deleteSongFromPlaylist(songId, inputsValue) {
+    for (i of playlists) {
+        for (j of i.songs) {
+            if (j.id == songId) {
+                if (inputsValue.length > 0) {
+                    for (k of inputsValue) {
+                        if (k == i.id) {
+                            break;
+                        }
+                        else {
+                            var songToDelete = i.songs.indexOf(j);
+                            i.songs.splice(songToDelete, 1);
+                        }
+                    }
+                }
+                else{
+                    var songToDelete1 = i.songs.indexOf(j);
+                    i.songs.splice(songToDelete, 1);
+                }
+
+            }
+        }
     }
-    ulTitleOfPlaylists.innerHTML = titlesOfPlaylists;
-    dropdownSong.classList.add('display');
-
-}
 }
 
-
-function pushSongInPlaylist(newSongForPlaylist, playlistsId) {
+function pushSongInPlaylist(newSongForPlaylist, playlistsId, songId) {
     for (i of playlistsId) {
         for (j of playlists) {
             if (j.id == i) {
+                if (j.songs.length > 0) {
+                    for (k of j.songs) {
+                        if (k.id == songId) {
+                            break;
+                        }
+                        else {
+                            j.songs.push(newSongForPlaylist);
+                            break;
+
+                        }
+                    }
+
+                }
+                else {
+                    j.songs.push(newSongForPlaylist);
+
+                }
+
                 //check if this song had pushed!!!!!!
-                j.songs.push(newSongForPlaylist);
+
             }
         }
     }
@@ -304,3 +350,4 @@ function songOpenDropInPlaylist(dropdownSong) {
 
     }
 }
+
