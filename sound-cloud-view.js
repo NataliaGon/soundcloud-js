@@ -294,16 +294,18 @@ function songOpenDrop() {
 }
 
 function deleteSongFromPlaylist(songId, playlistsId) {
-  console.log(playlistsId[0]);
+  // console.log(playlistsId[0]);
   for (i of playlists) {
-    for ( let j in i.songs) {
-      console.log(j);
+    for (let j of i.songs){
+      // console.log(j);
+      // console.log(j.id);
+
       if (j.id == songId) {
         if (playlistsId.length > 0) {  
           for (k of playlistsId) {
-            console.log(k);
+            // console.log(k);
             if (k == i.id) {
-              console.log("I AM");
+              // console.log("I AM");
             } else {
               const songToDelete = i.songs.indexOf(j);
               i.songs.splice(songToDelete, 1);
@@ -319,29 +321,27 @@ function deleteSongFromPlaylist(songId, playlistsId) {
 }
 
 function pushSongInPlaylist(newSongForPlaylist, playlistsId, songId) {
+ var isSong=false;
   for (var i of playlistsId) {
     for (var j of playlists) {
       if (j.id == i) {
         if (j.songs.length > 0) {
           for (var k of j.songs) {
             if (k.id == songId) {
-            
-            } else {
-              j.songs.push(newSongForPlaylist);
-              
+            isSong=true;
+            break;
             }
-          }
+           } 
         } else {
           j.songs.push(newSongForPlaylist);
-        }
-     
-        //check if this song had pushed!!!!!!
+        } 
+        if(!isSong){
+          j.songs.push(newSongForPlaylist);  
+          isSong=false;
+        }   
+      } 
       }
-    }
-    
-  }
-  // var inputsValue = [];
-
+    }       
   savePlaylists();
 }
 //Delete song function
