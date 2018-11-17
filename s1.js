@@ -261,7 +261,6 @@ function findSongToAddInPlaylist(songId, inputsValue) {
       break;
     }
   }
-  //   pushSongInPlaylist(songForPlaylist, inputsValue, songId);
   handleNewSong(songForPlaylist, inputsValue, songId);
 }
 function songOpenDrop() {
@@ -281,9 +280,7 @@ function songOpenDrop() {
         inputsValue.push(i.value);
       }
     }
-
     findSongToAddInPlaylist(songId, inputsValue);
-
     inputsValue.length = 0;
   } else {
     event.target.style.color = "#2196F3";
@@ -292,13 +289,9 @@ function songOpenDrop() {
   }
 }
 
-function deleteSongFromPlaylist(song, songId, songsArray) {
-    console.log(song);
-    console.log(songsArray);
+function deleteSongFromPlaylist(song,songsArray) {
   const songIndex = songsArray.indexOf(song);
-  console.log(songIndex);
   songsArray.splice(songIndex, 1);
-  console.log(songsArray)
   savePlaylists();
 }
 
@@ -308,35 +301,35 @@ function pushSongInPlaylist(song, songId, songsArray) {
 }
 function handleNewSong(songForPlaylist, inputsValue, songId) {
   if (inputsValue.length == 0) {
-    console.log(inputsValue.length);
     for (let playlist of playlists) {
       let isSong = isSongInPlaylist(songId, playlist);
-      console.log(isSong);
       if (isSong){
-        deleteSongFromPlaylist(songForPlaylist, songId, playlist.songs);
+        deleteSongFromPlaylist(songForPlaylist,playlist.songs);
       }
     }
   } else {
     for (let playlist of playlists) {
       let isSong = isSongInPlaylist(songId, playlist);
-      console.log(isSong);
+      let isPlaylistInInputs=false;
+
       for (let inputId of inputsValue) {
-        if (playlist.id == inputId && !isSong) {
-          pushSongInPlaylist(songForPlaylist, songId, playlist.songs);
-          
-        } else if ((playlist.id != inputId) && isSong) {
-            deleteSongFromPlaylist(songForPlaylist, songId, playlist.songs);
-          }
+        if (playlist.id == inputId){
+             isPlaylistInInputs =true;
+        }
+        if ((playlist.id == inputId)&&(!isSong)){
+          pushSongInPlaylist(songForPlaylist, songId, playlist.songs);   
+        } 
       }
-
+      if ((!isPlaylistInInputs) && isSong) {
+        deleteSongFromPlaylist(songForPlaylist,playlist.songs);
+      }
     }
-  }
+    
 }
-
+  }
 function isSongInPlaylist(songId, playlist) {
   let isSong=false;
     for (let song of playlist.songs) {
-      console.log(song.id,songId,playlist.songs );
     if (song.id==songId) {
         isSong=true; 
     }
