@@ -261,7 +261,8 @@ function findSongToAddInPlaylist(songId, inputsValue) {
       break;
     }
   }
-  pushSongInPlaylist(songForPlaylist, inputsValue, songId);
+  //   pushSongInPlaylist(songForPlaylist, inputsValue, songId);
+  handleNewSong(songForPlaylist, inputsValue, songId);
 }
 function songOpenDrop() {
   const dropdownSong = document.querySelector(
@@ -280,9 +281,9 @@ function songOpenDrop() {
         inputsValue.push(i.value);
       }
     }
-    //Check if something wasn't pushed back(delete)
+
     findSongToAddInPlaylist(songId, inputsValue);
-    deleteSongFromPlaylist(songId, inputsValue);
+
     inputsValue.length = 0;
   } else {
     event.target.style.color = "#2196F3";
@@ -291,59 +292,57 @@ function songOpenDrop() {
   }
 }
 
-function deleteSongFromPlaylist(songId, playlistsId) {
-  console.log(playlistsId[0]);
-  let songToDelete = {};
-  for (i of playlists) {
-    for (let j of i.songs) {
-      if (j.id == songId) {
-        if (playlistsId.length > 0) {
-          for (k of playlistsId) {
-            if (k == i.id) {
-              console.log("I AM");
-            } else {
-              songToDelete = i.songs[j];
-
-              i.songs.splice(songToDelete, 1);
-            }
-          }
-        } else {
-          console.log(j);
-          songToDelete = i.songs.indexOf(j);
-          console.log(songToDelete);
-          i.songs.splice(songToDelete, 1);
-          console.log(i.songs);
-        }
-      }
-    }
-  }
+function deleteSongFromPlaylist(song, songId, songsArray) {
+    console.log(song);
+    console.log(songsArray);
+  const songIndex = songsArray.indexOf(song);
+  console.log(songIndex);
+  songsArray.splice(songIndex, 1);
+  console.log(songsArray)
   savePlaylists();
 }
 
-function pushSongInPlaylist(newSongForPlaylist, playlistsId, songId) {
-  var isSong=false;
-   for (var i of playlistsId) {
-     for (var j of playlists) {
-       if (j.id == i) {
-         if (j.songs.length > 0) {
-           for (var k of j.songs) {
-             if (k.id == songId) {
-             isSong=true;
-             break;
-             }
-            } 
-         } else {
-           j.songs.push(newSongForPlaylist);
-         } 
-         if(!isSong){
-           j.songs.push(newSongForPlaylist);  
-           isSong=false;
-         }   
-       } 
-       }
-     }       
-   savePlaylists();
- }
+function pushSongInPlaylist(song, songId, songsArray) {
+  songsArray.push(song);
+  savePlaylists();
+}
+function handleNewSong(songForPlaylist, inputsValue, songId) {
+  if (inputsValue.length == 0) {
+    console.log(inputsValue.length);
+    for (let playlist of playlists) {
+      let isSong = isSongInPlaylist(songId, playlist);
+      console.log(isSong);
+      if (isSong){
+        deleteSongFromPlaylist(songForPlaylist, songId, playlist.songs);
+      }
+    }
+  } else {
+    for (let playlist of playlists) {
+      let isSong = isSongInPlaylist(songId, playlist);
+      console.log(isSong);
+      for (let inputId of inputsValue) {
+        if (playlist.id == inputId && !isSong) {
+          pushSongInPlaylist(songForPlaylist, songId, playlist.songs);
+          
+        } else if ((playlist.id != inputId) && isSong) {
+            deleteSongFromPlaylist(songForPlaylist, songId, playlist.songs);
+          }
+      }
+
+    }
+  }
+}
+
+function isSongInPlaylist(songId, playlist) {
+  let isSong=false;
+    for (let song of playlist.songs) {
+      console.log(song.id,songId,playlist.songs );
+    if (song.id==songId) {
+        isSong=true; 
+    }
+  }
+  return isSong
+}
 
 //Delete song function
 // function songOpenDropInPlaylist(dropdownSong) {
