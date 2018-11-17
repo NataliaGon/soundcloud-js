@@ -149,7 +149,7 @@ function createPlaylistsList(playlists) {
       let allDropDown = document.getElementsByClassName("dropdown-in-playlist");
       for (each of allDropDown) {
         if (each.dataset.mark == idToOpen) {
-          songOpenDropInPlaylist(each);
+          songOpenDrop(each);
         }
       }
     });
@@ -255,8 +255,6 @@ function findSongToAddInPlaylist(songId,inputsValue){
     for (song of songs) {
         if (song.id == songId) {
           songForPlaylist = song;
-          // const idSongPlaylist = makeid();
-          // songForPlaylist.songIdInPlaylist = idSongPlaylist;
           break;
         }
       }
@@ -281,10 +279,7 @@ function songOpenDrop() {
     }
     //Check if something wasn't pushed back(delete)
     findSongToAddInPlaylist(songId,inputsValue);
-    deleteSongFromPlaylist(songId, inputsValue);
-    // for (i of inputsValue){
-    //   console.log(i.checked.type);
-    // }
+    deleteSongFromPlaylist(songId,inputsValue);
     inputsValue.length=0;
   } else {
     event.target.style.color = "#2196F3";
@@ -294,30 +289,33 @@ function songOpenDrop() {
 }
 
 function deleteSongFromPlaylist(songId, playlistsId) {
-  // console.log(playlistsId[0]);
+  console.log(playlistsId[0]);
+  let songToDelete={}
   for (i of playlists) {
     for (let j of i.songs){
-      // console.log(j);
-      // console.log(j.id);
-
       if (j.id == songId) {
         if (playlistsId.length > 0) {  
           for (k of playlistsId) {
-            // console.log(k);
             if (k == i.id) {
-              // console.log("I AM");
+              console.log("I AM");
             } else {
-              const songToDelete = i.songs.indexOf(j);
+              
+               songToDelete = i.songs[j];
+               
               i.songs.splice(songToDelete, 1);
             }
           }
         } else {
-          const songToDelete = i.songs.indexOf(j);
+          console.log(j);
+          songToDelete = i.songs.indexOf(j);
+          console.log(songToDelete);
           i.songs.splice(songToDelete, 1);
+          console.log(i.songs);
         }
       }
     }
   }
+  savePlaylists();
 }
 
 function pushSongInPlaylist(newSongForPlaylist, playlistsId, songId) {
