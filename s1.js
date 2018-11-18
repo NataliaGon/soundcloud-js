@@ -55,8 +55,12 @@ function createSongsList(songs) {
     </div>';
   }
   songsContainer.innerHTML = songsHTML;
+  let comeFromPlayList = false;
   for (songBtn of songsIconBtns) {
-    songBtn.addEventListener("click", songOpenDrop);
+    songBtn.addEventListener("click", function() {
+        console.log(songBtn);
+      songOpenDrop(comeFromPlayList);
+    });
   }
 }
 getSongsAPI("hip-hop");
@@ -114,22 +118,18 @@ function createPlaylistsList(playlists) {
         '</div>\
         <span class="icon-clock"></span>\
         <span class="song-time"></span>\
-        <span class="icon-heart-song-playlist icon-heart" data-mark="' +
-        trek.songIdInPlaylist +
-        '"data-id="' +
+        <span class="icon-heart-song-playlist icon-heart"\
+       data-id="' +
         trek.id +
         '"></span>\
-        <div class="dropdown dropdown-in-playlist" data-mark="' +
-        trek.songIdInPlaylist +
-        '" data-id="' +
+        <div class="dropdown dropdown-in-playlist" \
+        data-id="' +
         trek.id +
         '">\
             <h3>Add to playlist</h3>\
-            <ul class="container-for-playlists-title" data-mark="' +
-        trek.songIdInPlaylist +
-        '" data-id="' +
-        trek.id +
-        '" ></ul>\
+            <ul class="container-for-playlists-title ul-in-playlist" data-id="' +
+            trek.id +
+            '" ></ul>\
             <a href="#">Create playlist</a>\
             <hr/>\
         </div>\
@@ -144,17 +144,14 @@ function createPlaylistsList(playlists) {
   const dropDownSongPlaylist = document.getElementsByClassName(
     "icon-heart-song-playlist"
   );
-  for (each of dropDownSongPlaylist) {
-    each.addEventListener("click", function() {
-      let idToOpen = event.target.dataset.mark;
-      let allDropDown = document.getElementsByClassName("dropdown-in-playlist");
-      for (each of allDropDown) {
-        if (each.dataset.mark == idToOpen) {
-          songOpenDrop(each);
-        }
-      }
+  
+  let comeFromPlayList = true;
+  for (songBtn of dropDownSongPlaylist) {
+    songBtn.addEventListener("click", function(){
+      songOpenDrop(comeFromPlayList);
     });
   }
+
   var a = document.getElementsByClassName("delete-playlist-btn");
   for (var i = 0; i < a.length; i++) {
     var b = a[i];
@@ -215,11 +212,23 @@ function showInput() {
   event.target.previousElementSibling.value = event.target.innerHTML;
 }
 
-function drawPlaylistsInDropDown(songId, dropdownSong) {
+function drawPlaylistsInDropDown(songId, dropdownSong, comeFromPlayList) {
+ 
   let titlesOfPlaylists = "";
-  let ulTitleOfPlaylists = document.querySelector(
-    `ul[data-id="${event.target.dataset.id}"]`
-  );
+  let ulTitleOfPlaylists;
+  if (comeFromPlayList) {
+    ulTitleOfPlaylists='';
+    console.log(ulTitleOfPlaylists);
+    ulTitleOfPlaylists = document.querySelector(
+      `ul.ul-in-playlist[data-id="${event.target.dataset.id}"]`
+    );
+  
+  } else {
+    ulTitleOfPlaylists='';
+    ulTitleOfPlaylists = document.querySelector(
+      `ul[data-id="${event.target.dataset.id}"]`
+    );
+  }
   let isSongInPlaylist = false;
   for (each of playlists) {
     for (item of each.songs) {
@@ -249,9 +258,10 @@ function drawPlaylistsInDropDown(songId, dropdownSong) {
         each.title +
         "</li>";
     }
-    ulTitleOfPlaylists.innerHTML = titlesOfPlaylists;
-    dropdownSong.classList.add("display");
   }
+  ulTitleOfPlaylists.innerHTML = titlesOfPlaylists;
+  console.log(ulTitleOfPlaylists);
+  dropdownSong.classList.add("display");
 }
 function findSongToAddInPlaylist(songId, inputsValue) {
   let songForPlaylist;
@@ -263,15 +273,23 @@ function findSongToAddInPlaylist(songId, inputsValue) {
   }
   handleNewSong(songForPlaylist, inputsValue, songId);
 }
-function songOpenDrop() {
-  const dropdownSong = document.querySelector(
-    `div[data-id="${event.target.dataset.id}"]`
-  );
+function songOpenDrop(comeFromPlayList) {
+  let dropdownSong;
+  if (comeFromPlayList) {
+    dropdownSong = document.querySelector(
+      `.dropdown-in-playlist[data-id="${event.target.dataset.id}"]`
+    );
+  } else {
+    dropdownSong = document.querySelector(
+      `div[data-id="${event.target.dataset.id}"]`
+    );
+  }
   const allInputs = document.querySelectorAll(
     `input[data-id="${event.target.dataset.id}"]`
   );
   let songId = event.target.dataset.id;
   let inputsValue = [];
+
   if (dropdownSong.classList.contains("display")) {
     event.target.style.color = "#D8D8D8";
     dropdownSong.classList.remove("display");
@@ -285,17 +303,17 @@ function songOpenDrop() {
   } else {
     event.target.style.color = "#2196F3";
     loadPlaylists();
-    drawPlaylistsInDropDown(songId, dropdownSong);
+    drawPlaylistsInDropDown(songId, dropdownSong, comeFromPlayList);
   }
 }
 
-function deleteSongFromPlaylist(song,songsArray) {
+function deleteSongFromPlaylist(song, songsArray) {
   const songIndex = songsArray.indexOf(song);
   songsArray.splice(songIndex, 1);
   savePlaylists();
 }
 
-function pushSongInPlaylist(song, songId, songsArray) {
+function pushSongInPlaylist(song, songsArray) {
   songsArray.push(song);
   savePlaylists();
 }
@@ -303,83 +321,36 @@ function handleNewSong(songForPlaylist, inputsValue, songId) {
   if (inputsValue.length == 0) {
     for (let playlist of playlists) {
       let isSong = isSongInPlaylist(songId, playlist);
-      if (isSong){
-        deleteSongFromPlaylist(songForPlaylist,playlist.songs);
+      if (isSong) {
+        deleteSongFromPlaylist(songForPlaylist, playlist.songs);
       }
     }
   } else {
     for (let playlist of playlists) {
       let isSong = isSongInPlaylist(songId, playlist);
-      let isPlaylistInInputs=false;
+      let isPlaylistInInputs = false;
 
       for (let inputId of inputsValue) {
-        if (playlist.id == inputId){
-             isPlaylistInInputs =true;
+        if (playlist.id == inputId) {
+          isPlaylistInInputs = true;
         }
-        if ((playlist.id == inputId)&&(!isSong)){
-          pushSongInPlaylist(songForPlaylist, songId, playlist.songs);   
-        } 
+        if (playlist.id == inputId && !isSong) {
+          pushSongInPlaylist(songForPlaylist, playlist.songs);
+        }
       }
-      if ((!isPlaylistInInputs) && isSong) {
-        deleteSongFromPlaylist(songForPlaylist,playlist.songs);
+      if (!isPlaylistInInputs && isSong) {
+        deleteSongFromPlaylist(songForPlaylist, playlist.songs);
       }
     }
-    
-}
   }
+}
 function isSongInPlaylist(songId, playlist) {
-  let isSong=false;
-    for (let song of playlist.songs) {
-    if (song.id==songId) {
-        isSong=true; 
+  let isSong = false;
+  for (let song of playlist.songs) {
+    if (song.id == songId) {
+      isSong = true;
     }
   }
-  return isSong
+  return isSong;
 }
 
-//Delete song function
-// function songOpenDropInPlaylist(dropdownSong) {
-//   var inputsValue = [];
-//   if (dropdownSong.classList.contains("display")) {
-//     event.target.style.color = "#D8D8D8";
-//     dropdownSong.classList.remove("display");
-//     var allInputs = document.getElementsByClassName("input-playlist-title");
-//     let songForPlaylist;
-//     for (i of allInputs) {
-//       if (i.checked) {
-//         inputsValue.push(i.value);
-//       }
-//     }
-//     let songId = event.target.dataset.id;
-
-//     for (song of songs) {
-//       if (song.id == songId) {
-//         songForPlaylist = song;
-//         const idSongPlaylist = makeid();
-//         songForPlaylist.songIdInPlaylist = idSongPlaylist;
-//         break;
-//       }
-//     }
-//     pushSongInPlaylist(songForPlaylist, inputsValue);
-//   } else {
-//     event.target.style.color = "#2196F3";
-//     loadPlaylists();
-//     const titlesOfPlaylists = playlists.map(playlist => {
-//       return (
-//         '<li><input class="input-playlist-title" value="' +
-//         playlist.id +
-//         '" type="checkbox">' +
-//         playlist.title +
-//         "</input></li>"
-//       );
-//     });
-//     const titleString = titlesOfPlaylists.join("");
-
-//     const ulTitleOfPlaylists = document.querySelector(
-//       `ul[data-mark="${event.target.dataset.mark}"]`
-//     );
-
-//     ulTitleOfPlaylists.innerHTML = titleString;
-//     dropdownSong.classList.add("display");
-//   }
-// }
